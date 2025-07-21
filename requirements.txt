@@ -1,6 +1,4 @@
 flask
 flask-cors
 pillow
-easyocr
-numpy
 google-generativeai
