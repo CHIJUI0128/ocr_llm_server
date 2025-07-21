@@ -98,7 +98,7 @@ CORS(app)
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 model = genai.GenerativeModel("gemini-1.5-pro")
 
-@app.route("/", methods=["POST"])
+@app.route("/ocr", methods=["POST"])
 def ocr():
     if 'image' not in request.files:
         return jsonify({"error": "No image uploaded"}), 400
