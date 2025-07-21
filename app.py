@@ -15,7 +15,7 @@ CORS(app)  # 允許跨域
 import os
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
-reader = easyocr.Reader(['ch_tra', 'en'])
+reader = easyocr.Reader(['ch_tra', 'en'], gpu=False)
 
 @app.route('/ocr', methods=['POST'])
 def ocr():
