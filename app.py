@@ -86,19 +86,18 @@
 
 
 
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 import io
 import google.generativeai as genai
+from google.generativeai.types import Part  # ✅ 加這行
 import os
 import json
 
 app = Flask(__name__)
 CORS(app)
 
-# ✅ 設定 API 金鑰（從環境變數讀取）
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 @app.route('/ocr', methods=['POST'])
@@ -106,13 +105,11 @@ def ocr():
     if 'image' not in request.files:
         return jsonify({'error': 'No image provided'}), 400
 
-    # ✅ 讀取圖片並轉為 byte array
     img = Image.open(request.files['image'].stream).convert("RGB")
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format='JPEG')
     img_bytes = img_byte_arr.getvalue()
 
-    # ✅ 使用 Gemini 模型
     model = genai.GenerativeModel('gemini-1.5-pro')
 
     prompt = """
@@ -121,18 +118,15 @@ def ocr():
       "name": "店名",
       "address": "地址"
     }
-
     如果無法辨識，請填入 "未知"。
     """
 
+    # ✅ 使用 Part.from_data 傳圖片
     response = model.generate_content(
-        [prompt, genai.types.content.ImageData(data=img_bytes, mime_type="image/jpeg")]
+        [prompt, Part.from_data(data=img_bytes, mime_type="image/jpeg")]
     )
 
-    print("Gemini 回覆：\n", response.text)
-
     try:
-        # 解析 JSON
         text_output = response.text.strip().strip("```json").strip("```").strip()
         result = json.loads(text_output)
 
@@ -147,5 +141,5 @@ def ocr():
     return jsonify({'name': name, 'address': address})
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=False, host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
