@@ -85,61 +85,45 @@
 #     app.run(debug=False, host='0.0.0.0', port=port)
 
 
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import google.generativeai as genai
 from PIL import Image
 import io
-import google.generativeai as genai
-from google.generativeai.types import Part  # ✅ 加這行
 import os
-import json
 
 app = Flask(__name__)
 CORS(app)
 
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+model = genai.GenerativeModel("gemini-pro-vision")
 
-@app.route('/ocr', methods=['POST'])
+@app.route("/", methods=["POST"])
 def ocr():
     if 'image' not in request.files:
-        return jsonify({'error': 'No image provided'}), 400
+        return jsonify({"error": "No image uploaded"}), 400
 
-    img = Image.open(request.files['image'].stream).convert("RGB")
-    img_byte_arr = io.BytesIO()
-    img.save(img_byte_arr, format='JPEG')
-    img_bytes = img_byte_arr.getvalue()
+    image_file = request.files["image"]
+    img_bytes = image_file.read()
 
-    model = genai.GenerativeModel('gemini-1.5-pro')
+    prompt = "請從圖片中擷取出店名與地址，格式為 JSON：{'店名': '...', '地址': '...'}"
 
-    prompt = """
-    請你從這張圖片中辨識出店家名稱與地址，並回傳 JSON 格式：
-    {
-      "name": "店名",
-      "address": "地址"
-    }
-    如果無法辨識，請填入 "未知"。
-    """
-
-    # ✅ 使用 Part.from_data 傳圖片
-    response = model.generate_content(
-        [prompt, Part.from_data(data=img_bytes, mime_type="image/jpeg")]
-    )
+    response = model.generate_content([
+        prompt,
+        {
+            "inline_data": {
+                "mime_type": "image/jpeg",
+                "data": img_bytes
+            }
+        }
+    ])
 
     try:
-        text_output = response.text.strip().strip("```json").strip("```").strip()
-        result = json.loads(text_output)
+        extracted = response.text
+        data = extracted.strip().replace("'", '"')
+        return jsonify(json.loads(data))
+    except:
+        return jsonify({"raw": response.text})
 
-        name = result.get("name", "未知")
-        address = result.get("address", "未知")
-
-    except Exception as e:
-        print("解析錯誤：", e)
-        name = '未知'
-        address = '未知'
-
-    return jsonify({'name': name, 'address': address})
-
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
