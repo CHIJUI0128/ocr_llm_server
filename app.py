@@ -255,6 +255,8 @@ def ocr():
             }
         }
     ])
+    print("辨識結果：")
+    print(response.text)
 
     # 嘗試解析模型輸出為 JSON
     try:
