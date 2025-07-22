@@ -221,6 +221,7 @@ model = genai.GenerativeModel("gemini-1.5-pro")
 
 @app.route("/ocr", methods=["POST"])
 def ocr():
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     if 'image' not in request.files:
         return jsonify({"error": "No image uploaded"}), 400
 
@@ -255,6 +256,8 @@ def ocr():
             }
         }
     ])
+    print("Gemini raw response:")
+    print(response)
     print("辨識結果：")
     print(response.text)
 
@@ -268,6 +271,7 @@ def ocr():
             "error": "Invalid JSON format",
             "raw": response.text
         })
+    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
