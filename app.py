@@ -221,7 +221,7 @@ model = genai.GenerativeModel("gemini-1.5-pro")
 
 @app.route("/ocr", methods=["POST"])
 def ocr():
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", flush=True)
     if 'image' not in request.files:
         return jsonify({"error": "No image uploaded"}), 400
 
@@ -256,10 +256,10 @@ def ocr():
             }
         }
     ])
-    print("Gemini raw response:")
-    print(response)
-    print("辨識結果：")
-    print(response.text)
+    print("Gemini raw response:", flush=True)
+    print(response, flush=True)
+    print("辨識結果：", flush=True)
+    print(response.text, flush=True)
 
     # 嘗試解析模型輸出為 JSON
     try:
