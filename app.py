@@ -264,7 +264,17 @@ def ocr():
     # 嘗試解析模型輸出為 JSON
     try:
         extracted = response.text.strip()
-        json_data = json.loads(extracted.replace("'", '"'))
+
+        # 移除 ```json 開頭與 ``` 結尾
+        if extracted.startswith("```json"):
+            extracted = extracted[7:]  # 去掉 ```json
+        if extracted.endswith("```"):
+            extracted = extracted[:-3]  # 去掉 ```
+
+        extracted = extracted.strip()
+
+        # 解析 JSON
+        json_data = json.loads(extracted)
 
         # 👉 將中文鍵轉成英文鍵
         mapped_data = {
