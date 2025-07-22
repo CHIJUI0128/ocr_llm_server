@@ -265,13 +265,20 @@ def ocr():
     try:
         extracted = response.text.strip()
         json_data = json.loads(extracted.replace("'", '"'))
-        return jsonify(json_data)
+
+        # 👉 將中文鍵轉成英文鍵
+        mapped_data = {
+            "name": json_data.get("店名", "error"),
+            "address": json_data.get("地址", "error")
+        }
+
+        return jsonify(mapped_data)
+
     except Exception as e:
         return jsonify({
             "error": "Invalid JSON format",
             "raw": response.text
         })
-    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
