@@ -159,7 +159,7 @@ def ocr():
     }
     
     # 直接把結果寫入 Google Sheet (用 Google Apps Script Web App URL)
-    sheet_url = "https://script.google.com/macros/s/你的ScriptID/exec"
+    sheet_url = "https://script.google.com/macros/s/AKfycbzf-llhgSP97vvDuzisINKiWpS2YOBUeNBrefILD8peEhMW1bGwTrNQyT8O29wqBU10/exec"
     params = {
         "name": mapped_data["name"],
         "address": mapped_data["address"],
