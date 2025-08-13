@@ -101,6 +101,10 @@ app = Flask(__name__)
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 model = genai.GenerativeModel("gemini-1.5-pro")
 
+@app.route("/", methods=["GET"])
+def home():
+    return "OCR Server is running"
+
 @app.route("/ocr", methods=["POST"])
 def ocr():
     if 'image' not in request.files or 'uid' not in request.form:
