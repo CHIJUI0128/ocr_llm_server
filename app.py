@@ -443,8 +443,8 @@ def handle_single_case(json_data, uid):
 
 # ===== 多筆清單處理 (Case 5/6) =====
 def handle_multi_case(json_list, uid):
-    results = []
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    results = []
 
     for item in json_list:
         name = item.get("店名", "error").strip()
@@ -472,9 +472,12 @@ def handle_multi_case(json_list, uid):
             "latitude": lat,
             "longitude": lng
         }
+
+        # ✅ 每筆立即寫入 Google Sheet
+        save_to_google_sheet(result)
+
         results.append(result)
 
-    save_to_google_sheet(results)
     return results
 
 # ===== 圖片處理主流程 =====
