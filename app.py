@@ -382,28 +382,28 @@ def find_address_by_place_name(name):
         return address, loc["lat"], loc["lng"]
     return None, None, None
 
- def save_to_google_sheet(data):
-     """將資料存入Google Sheet"""
-     payload = {
-         "uid": data["uid"],
-         "name": data["name"],
-         "address": data["address"],
-         "time": data["time"],
-         "latitude": data["latitude"],
-         "longitude": data["longitude"]
-     }
-    
-     try:
-         response = requests.post(GOOGLE_SHEET_URL, json=payload)
-         if response.status_code == 200:
-             print("✅ 資料已存入Google Sheet")
-             return True
-         else:
-             print(f"❌ Google Sheet寫入失敗：{response.status_code}")
-             return False
-     except Exception as e:
-         print(f"❌ Google Sheet寫入錯誤：{e}")
-         return False
+def save_to_google_sheet(data):
+    """將資料存入Google Sheet"""
+    payload = {
+        "uid": data["uid"],
+        "name": data["name"],
+        "address": data["address"],
+        "time": data["time"],
+        "latitude": data["latitude"],
+        "longitude": data["longitude"]
+    }
+
+    try:
+        response = requests.post(GOOGLE_SHEET_URL, json=payload)
+        if response.status_code == 200:
+            print("✅ 資料已存入Google Sheet")
+            return True
+        else:
+            print(f"❌ Google Sheet寫入失敗：{response.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ Google Sheet寫入錯誤：{e}")
+        return False
 
 # ===== 單筆處理 (Case 1~4) =====
 def handle_single_case(json_data, uid):
